@@ -105,5 +105,5 @@ The website uses
 
 ## demo
 
-https://github.com/user-attachments/assets/53560f79-0a4d-4542-b1cc-6ce9dc2f4ff8
+
 
