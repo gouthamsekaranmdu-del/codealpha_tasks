@@ -93,3 +93,4 @@ The website uses
 
 ## screenshot
 
+<img width="1915" height="1077" alt="Image" src="https://github.com/user-attachments/assets/e8c60ae9-7c9a-40d7-83be-a7e83f59f11b" />
