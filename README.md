@@ -94,3 +94,11 @@ The website uses
 ## screenshot
 
 <img width="1915" height="1077" alt="Image" src="https://github.com/user-attachments/assets/e8c60ae9-7c9a-40d7-83be-a7e83f59f11b" />
+
+<img width="1918" height="1078" alt="Image" src="https://github.com/user-attachments/assets/520a0390-eb29-4668-bb95-ae0ab29c382a" />
+
+<img width="1917" height="1078" alt="Image" src="https://github.com/user-attachments/assets/3dff34b0-fab2-468e-98e5-4974a4ea073f" />
+
+<img width="1918" height="1077" alt="Image" src="https://github.com/user-attachments/assets/68a5ad0b-4851-436b-83bd-5825e68fb256" />
+
+<img width="1917" height="1078" alt="Image" src="https://github.com/user-attachments/assets/d8636416-5566-4a5e-bea6-a2ef36bbffc6" />
