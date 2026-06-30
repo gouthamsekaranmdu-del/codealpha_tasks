@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nova Mega Store</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    min-height:100vh;
+}
+
+/* LOGIN */
+#loginPage{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.login-box{
+    width:350px;
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(20px);
+    padding:40px;
+    border-radius:20px;
+    color:#fff;
+}
+
+.login-box h2{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.login-box input{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border:none;
+    border-radius:30px;
+    outline:none;
+}
+
+.login-box button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:30px;
+    background:#00d4ff;
+    color:white;
+    cursor:pointer;
+}
+
+#error{
+    color:#ffb3b3;
+    text-align:center;
+    margin-top:10px;
+}
+
+/* STORE */
+#storePage{
+    display:none;
+}
+
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 8%;
+    color:white;
+}
+
+.logo{
+    font-size:2rem;
+    font-weight:bold;
+}
+
+.search-box input{
+    width:300px;
+    padding:12px;
+    border:none;
+    border-radius:30px;
+}
+
+.cart-btn{
+    padding:12px 20px;
+    background:rgba(255,255,255,.2);
+    border-radius:30px;
+    cursor:pointer;
+}
+
+.products{
+    width:90%;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:30px;
+    padding:40px 0;
+}
+
+.card{
+    background:rgba(255,255,255,.15);
+    backdrop-filter:blur(20px);
+    border-radius:20px;
+    overflow:hidden;
+    color:white;
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-10px);
+}
+
+.card img{
+    width:100%;
+    height:250px;
+    object-fit:cover;
+}
+
+.content{
+    padding:20px;
+}
+
+.price{
+    margin:15px 0;
+    font-size:1.2rem;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:30px;
+    cursor:pointer;
+    background:#00d4ff;
+    color:white;
+    margin-top:10px;
+}
+
+/* CART */
+
+.cart{
+    position:fixed;
+    top:0;
+    right:-400px;
+    width:350px;
+    height:100%;
+    background:#fff;
+    transition:.4s;
+    overflow:auto;
+    padding:20px;
+}
+
+.cart.active{
+    right:0;
+}
+
+.cart-item{
+    border-bottom:1px solid #ddd;
+    padding:10px 0;
+}
+
+.total{
+    font-size:1.3rem;
+    margin:20px 0;
+}
+
+.checkout{
+    background:#28a745;
+}
+
+.back-btn{
+    width:250px;
+    display:block;
+    margin:30px auto;
+}
+
+#successPage{
+    display:none;
+    height:100vh;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    color:white;
+    text-align:center;
+}
+
+@media(max-width:768px){
+
+header{
+    flex-direction:column;
+    gap:15px;
+}
+
+.search-box input{
+    width:100%;
+}
+
+.cart{
+    width:100%;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div id="loginPage">
+
+<div class="login-box">
+
+<h2>Nova Store Login</h2>
+
+<input type="text" id="username" placeholder="Username">
+
+<input type="password" id="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+
+<p style="margin-top:20px">
+Demo Username: <b>admin</b><br>
+Demo Password: <b>1234</b>
+</p>
+
+<p id="error"></p>
+
+</div>
+
+</div>
+
+<!-- STORE -->
+
+<div id="storePage">
+
+<header>
+
+<div class="logo">Nova Store</div>
+
+<div class="search-box">
+<input type="text" id="search" placeholder="Search Products">
+</div>
+
+<div class="cart-btn" onclick="toggleCart()">
+🛒 Cart (<span id="count">0</span>)
+</div>
+
+</header>
+
+<section class="products" id="products"></section>
+
+<div class="cart" id="cart">
+
+<h2>Shopping Cart</h2>
+
+<div id="cartItems"></div>
+
+<div class="total">
+Total: ₹<span id="total">0</span>
+</div>
+
+<button class="checkout" onclick="placeOrder()">
+Place Order
+</button>
+
+</div>
+
+</div>
+
+<!-- SUCCESS PAGE -->
+
+<div id="successPage">
+
+<h1>✅ Order Placed Successfully!</h1>
+<h2>Thank You For Shopping With Nova Store</h2>
+
+<button onclick="location.reload()">
+Continue Shopping
+</button>
+
+</div>
+
+<script>
+
+const products=[
+
+{
+id:1,
+name:"Gaming Laptop",
+price:65000,
+image:"https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600",
+
+brands:[
+{name:"ASUS TUF A15",price:75000},
+{name:"MSI Gaming",price:85000},
+{name:"Lenovo LOQ",price:72000},
+{name:"Apple MacBook Air",price:95000},
+{name:"Samsung Galaxy Book",price:80000}
+]
+},
+
+{
+id:2,
+name:"Smart Watch",
+price:4500,
+image:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600",
+
+brands:[
+{name:"Apple Watch",price:40000},
+{name:"Samsung Galaxy Watch",price:25000},
+{name:"Boat Wave",price:3500},
+{name:"Noise Smart Watch",price:3000},
+{name:"Fire-Boltt",price:2500}
+]
+},
+
+{
+id:3,
+name:"Headphones",
+price:2500,
+image:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600",
+
+brands:[
+{name:"Sony WH1000XM5",price:30000},
+{name:"Boat Rockerz",price:2500},
+{name:"JBL Tune",price:4500},
+{name:"Bose QC",price:25000},
+{name:"Apple AirPods",price:15000}
+]
+},
+
+{
+id:4,
+name:"Smartphone",
+price:28000,
+image:"https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600",
+
+brands:[
+{name:"Samsung Galaxy S25",price:80000},
+{name:"Apple iPhone 16",price:85000},
+{name:"Redmi Note 14",price:22000},
+{name:"Vivo V50",price:30000},
+{name:"Moto Edge 60",price:35000}
+]
+}
+
+];
+
+let cart=[];
+
+function login(){
+
+let user=document.getElementById("username").value;
+let pass=document.getElementById("password").value;
+
+if(user==="admin" && pass==="1234"){
+
+document.getElementById("loginPage").style.display="none";
+document.getElementById("storePage").style.display="block";
+
+displayProducts(products);
+
+}else{
+
+document.getElementById("error").innerText=
+"Invalid Username or Password";
+
+}
+
+}
+
+function displayProducts(items){
+
+let container=document.getElementById("products");
+
+container.innerHTML="";
+
+items.forEach(product=>{
+
+container.innerHTML+=`
+
+<div class="card">
+
+<img src="${product.image}">
+
+<div class="content">
+
+<h3>${product.name}</h3>
+
+<div class="price">
+Starting From ₹${product.price}
+</div>
+
+<button onclick="showBrands(${product.id})">
+View Collection
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+function showBrands(id){
+
+const product=products.find(p=>p.id===id);
+
+let html=`
+<h1 style="text-align:center;color:white;">
+${product.name} Collection
+</h1>
+
+<div class="products">
+`;
+
+product.brands.forEach(brand=>{
+
+html+=`
+
+<div class="card">
+
+<div class="content">
+
+<h2>${brand.name}</h2>
+
+<div class="price">
+₹${brand.price}
+</div>
+
+<button onclick="addBrandToCart(
+'${brand.name}',${brand.price})">
+
+Add To Cart
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+html+=`
+</div>
+
+<button class="back-btn"
+onclick="displayProducts(products)">
+Back To Home
+</button>
+`;
+
+document.getElementById("products").innerHTML=html;
+
+}
+
+function addBrandToCart(name,price){
+
+cart.push({
+name:name,
+price:price
+});
+
+updateCart();
+
+alert(name+" Added To Cart");
+
+}
+
+function updateCart(){
+
+document.getElementById("count").innerText=
+cart.length;
+
+let html="";
+let total=0;
+
+cart.forEach((item,index)=>{
+
+total+=item.price;
+
+html+=`
+
+<div class="cart-item">
+
+<h4>${item.name}</h4>
+
+<p>₹${item.price}</p>
+
+<button onclick="removeItem(${index})">
+Remove
+</button>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("cartItems").innerHTML=
+html;
+
+document.getElementById("total").innerText=
+total;
+
+}
+
+function removeItem(index){
+
+cart.splice(index,1);
+
+updateCart();
+
+}
+
+function toggleCart(){
+
+document.getElementById("cart")
+.classList.toggle("active");
+
+}
+
+document.addEventListener("keyup",function(e){
+
+if(e.target.id==="search"){
+
+let value=e.target.value.toLowerCase();
+
+let filtered=products.filter(product=>
+product.name.toLowerCase().includes(value));
+
+displayProducts(filtered);
+
+}
+
+});
+
+function placeOrder(){
+
+if(cart.length===0){
+
+alert("Cart is Empty!");
+return;
+
+}
+
+document.getElementById("storePage")
+.style.display="none";
+
+document.getElementById("successPage")
+.style.display="flex";
+
+}
+
+</script>
+
+</body>
+</html>
