@@ -1,17 +1,18 @@
-# Task 3 - Project Management Tool
+# Task 2 - Social Media Platform
 
-A Trello-style interactive Kanban board built with HTML, CSS, and JavaScript.
+A mini social media app called ConnectHub built with HTML, CSS, and JavaScript.
 
 ## Features
 
-- Kanban board with 4 columns — To do, In Progress, Review, Done
-- Click any card to open detailed view with assignees, priority, and due date
-- Add comments inside cards
-- Drag and drop cards between columns
-- Add new cards to any column
-- Switch between multiple projects
-- Invite team members
-- Toast notifications for actions
+- User profile with posts, followers, and following count
+- Create and share posts (click the post box)
+- Like and unlike posts
+- Comment on posts
+- Follow and unfollow people
+- Trending topics sidebar
+- Online friends list
+- Notification badges
+- Toast notifications for all actions
 
 ## How to run
 
@@ -21,7 +22,7 @@ Just open `index.html` in any browser — no installation needed!
 
 - HTML5
 - CSS3
-- Vanilla JavaScript (no frameworks)
+- Vanilla JavaScript
 
 ---
-*Built as Task 3/4 for the CodeAlpha Internship.*
+*Built as Task 2/4 for the CodeAlpha Internship.*
