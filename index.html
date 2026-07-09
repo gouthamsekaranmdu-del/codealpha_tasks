@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TaskFlow — Project Management Tool</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f5f7;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid #e2e4e9;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.logo{font-size:16px;font-weight:600;color:#1a1a2e;display:flex;align-items:center;gap:8px}
+.logo i{color:#534AB7;font-size:20px}
+.project-tabs{display:flex;gap:4px}
+.tab{font-size:13px;padding:5px 14px;border-radius:8px;border:none;background:transparent;color:#6b7280;cursor:pointer;transition:all 0.15s}
+.tab.active{background:#EEEDFE;color:#3C3489;font-weight:500}
+.tab:hover:not(.active){background:#f4f5f7}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:500;color:#fff;flex-shrink:0}
+.btn-invite{font-size:13px;padding:6px 14px;border-radius:8px;border:1px solid #c7d2fe;background:#EEEDFE;color:#3C3489;cursor:pointer;display:flex;align-items:center;gap:6px;font-weight:500}
+.btn-invite:hover{background:#534AB7;color:#fff;border-color:#534AB7}
+.board{display:flex;gap:14px;padding:20px;overflow-x:auto;min-height:calc(100vh - 60px);align-items:flex-start}
+.column{background:#ebecf0;border-radius:12px;width:230px;flex-shrink:0;display:flex;flex-direction:column;max-height:calc(100vh - 100px)}
+.col-header{padding:12px 14px 8px;display:flex;align-items:center;justify-content:space-between}
+.col-title{font-size:13px;font-weight:600;color:#1a1a2e;display:flex;align-items:center;gap:8px}
+.col-count{font-size:11px;background:#fff;border-radius:10px;padding:1px 8px;color:#6b7280;font-weight:500}
+.col-add-btn{font-size:20px;color:#9ca3af;cursor:pointer;background:none;border:none;line-height:1;padding:2px 4px;border-radius:6px;transition:all 0.15s}
+.col-add-btn:hover{background:#d1d5db;color:#374151}
+.cards{padding:0 8px 8px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;flex:1}
+.card{background:#fff;border:1px solid #e2e4e9;border-radius:10px;padding:12px;cursor:pointer;transition:all 0.15s;user-select:none}
+.card:hover{box-shadow:0 2px 8px rgba(0,0,0,0.1);border-color:#c7d2fe}
+.card.dragging{opacity:0.4;transform:rotate(2deg)}
+.card-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:8px}
+.card-title{font-size:13px;color:#1a1a2e;line-height:1.45;margin-bottom:10px;font-weight:400}
+.card-footer{display:flex;align-items:center;justify-content:space-between}
+.card-meta{display:flex;align-items:center;gap:6px}
+.card-due{font-size:11px;color:#9ca3af;display:flex;align-items:center;gap:3px}
+.card-comments{font-size:11px;color:#9ca3af;display:flex;align-items:center;gap:3px}
+.card-avatars{display:flex}
+.card-avatars .avatar{width:22px;height:22px;font-size:9px;margin-left:-5px;border:2px solid #fff}
+.card-avatars .avatar:first-child{margin-left:0}
+.priority-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.drop-zone{min-height:36px;border:2px dashed transparent;border-radius:8px;margin:0 8px 4px;transition:all 0.15s}
+.drop-zone.active{border-color:#534AB7;background:#EEEDFE}
+.add-form{padding:0 8px 10px}
+.add-form input{width:100%;font-size:13px;padding:8px 10px;border:2px solid #534AB7;border-radius:8px;background:#fff;color:#1a1a2e;margin-bottom:6px;outline:none}
+.add-form-btns{display:flex;gap:6px}
+.btn-confirm{font-size:12px;padding:6px 14px;border-radius:8px;border:none;background:#534AB7;color:#fff;cursor:pointer;font-weight:500}
+.btn-confirm:hover{background:#3C3489}
+.btn-cancel-form{font-size:12px;padding:6px 10px;border-radius:8px;border:1px solid #d1d5db;background:transparent;color:#6b7280;cursor:pointer}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:100}
+.modal{background:#fff;border-radius:16px;padding:24px;width:400px;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:12px}
+.modal-title{font-size:16px;font-weight:600;color:#1a1a2e;line-height:1.4;flex:1}
+.modal-close{background:none;border:none;font-size:20px;color:#9ca3af;cursor:pointer;padding:0;border-radius:6px;line-height:1}
+.modal-close:hover{color:#1a1a2e;background:#f4f5f7}
+.modal-section{margin-bottom:16px}
+.modal-label{font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px}
+.modal-badges{display:flex;gap:6px;flex-wrap:wrap}
+.badge{font-size:11px;padding:3px 10px;border-radius:10px;font-weight:500}
+.assignees-row{display:flex;gap:6px;flex-wrap:wrap}
+.assignee-chip{display:flex;align-items:center;gap:6px;background:#f4f5f7;border:1px solid #e2e4e9;border-radius:8px;padding:4px 10px;font-size:12px;color:#374151}
+.comments-list{display:flex;flex-direction:column;gap:10px}
+.comment-item{display:flex;gap:8px}
+.comment-body{flex:1;background:#f4f5f7;border-radius:8px;padding:8px 12px}
+.comment-author{font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:2px}
+.comment-text{font-size:13px;color:#374151;line-height:1.5}
+.comment-time{font-size:11px;color:#9ca3af;margin-top:4px}
+.no-comments{font-size:13px;color:#9ca3af;font-style:italic}
+.comment-input-row{display:flex;gap:8px;margin-top:10px;align-items:center}
+.comment-input-row input{flex:1;font-size:13px;padding:8px 12px;border:1px solid #e2e4e9;border-radius:8px;background:#f4f5f7;color:#1a1a2e;outline:none;transition:border-color 0.15s}
+.comment-input-row input:focus{border-color:#534AB7;background:#fff}
+.btn-send{font-size:12px;padding:7px 14px;border-radius:8px;border:none;background:#534AB7;color:#fff;cursor:pointer;font-weight:500;white-space:nowrap}
+.btn-send:hover{background:#3C3489}
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;background:#1a1a2e;color:#fff;border-radius:10px;padding:12px 18px;font-size:13px;display:flex;align-items:center;gap:8px;z-index:200;animation:fadeUp 0.2s ease;box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo"><i class="ti ti-layout-kanban"></i> TaskFlow</div>
+    <div class="project-tabs">
+      <button class="tab active">Website Redesign</button>
+      <button class="tab">Mobile App</button>
+      <button class="tab">API v2</button>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="card-avatars" style="display:flex">
+      <div class="avatar" style="background:#534AB7;width:30px;height:30px;font-size:11px;margin-left:0;border:2px solid #fff">VS</div>
+      <div class="avatar" style="background:#0F6E56;width:30px;height:30px;font-size:11px;margin-left:-6px;border:2px solid #fff">AR</div>
+      <div class="avatar" style="background:#993C1D;width:30px;height:30px;font-size:11px;margin-left:-6px;border:2px solid #fff">PK</div>
+    </div>
+    <button class="btn-invite" id="btn-invite"><i class="ti ti-user-plus"></i> Invite</button>
+  </div>
+</div>
+
+<div class="board" id="board"></div>
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+
+<script>
+const COLORS={VS:"#534AB7",AR:"#0F6E56",PK:"#993C1D",SN:"#854F0B",MR:"#185FA5"};
+const TAGS={
+  design:{label:"Design",bg:"#EEEDFE",color:"#3C3489"},
+  dev:{label:"Dev",bg:"#E1F5EE",color:"#085041"},
+  research:{label:"Research",bg:"#FAEEDA",color:"#633806"},
+  review:{label:"Review",bg:"#FAECE7",color:"#712B13"},
+  content:{label:"Content",bg:"#E6F1FB",color:"#0C447C"}
+};
+const PRIORITY={high:{color:"#E24B4A",label:"High"},medium:{color:"#EF9F27",label:"Medium"},low:{color:"#639922",label:"Low"}};
+
+let columns=[
+  {id:"todo",title:"To do",cards:[
+    {id:1,title:"Design new landing page hero section",tag:"design",due:"Jun 28",assignees:["VS","AR"],priority:"high",comments:[{author:"VS",text:"Let's use the new brand colors here.",time:"2h ago"},{author:"AR",text:"Agreed, I'll pull the Figma file.",time:"1h ago"}]},
+    {id:2,title:"Write API documentation for auth endpoints",tag:"dev",due:"Jul 2",assignees:["PK"],priority:"medium",comments:[{author:"PK",text:"Started draft, will share tomorrow.",time:"3h ago"}]},
+    {id:3,title:"User research interviews — 5 participants",tag:"research",due:"Jul 5",assignees:["AR","SN"],priority:"low",comments:[]},
+  ]},
+  {id:"inprogress",title:"In progress",cards:[
+    {id:4,title:"Build responsive navigation component",tag:"dev",due:"Jun 27",assignees:["VS"],priority:"high",comments:[{author:"VS",text:"Mobile breakpoint done, working on tablet.",time:"30m ago"}]},
+    {id:5,title:"Review competitor pricing pages",tag:"research",due:"Jun 29",assignees:["MR","AR"],priority:"medium",comments:[]},
+  ]},
+  {id:"review",title:"Review",cards:[
+    {id:6,title:"Homepage copy — final draft",tag:"content",due:"Jun 25",assignees:["AR"],priority:"medium",comments:[{author:"AR",text:"Ready for review, please check tone.",time:"5h ago"},{author:"MR",text:"Looks good! Minor edits in doc.",time:"4h ago"}]},
+  ]},
+  {id:"done",title:"Done",cards:[
+    {id:7,title:"Set up project repo and CI pipeline",tag:"dev",due:"Jun 20",assignees:["PK","VS"],priority:"low",comments:[{author:"PK",text:"All green, CI passing.",time:"1d ago"}]},
+    {id:8,title:"Brand guidelines document",tag:"design",due:"Jun 22",assignees:["AR"],priority:"low",comments:[]},
+  ]},
+];
+
+let dragCard=null,dragFrom=null,addingIn=null,nextId=9;
+
+function tag(t){return TAGS[t]||{label:t,bg:"#f4f5f7",color:"#374151"};}
+
+function render(){
+  const board=document.getElementById("board");
+  board.innerHTML="";
+  columns.forEach(col=>{
+    const el=document.createElement("div");
+    el.className="column";
+    el.innerHTML=`
+      <div class="col-header">
+        <span class="col-title">${col.title}<span class="col-count">${col.cards.length}</span></span>
+        <button class="col-add-btn" data-col="${col.id}" title="Add card"><i class="ti ti-plus"></i></button>
+      </div>
+      <div class="cards" id="cards-${col.id}">
+        ${col.cards.map(c=>`
+          <div class="card" draggable="true" data-id="${c.id}" data-col="${col.id}">
+            <span class="card-tag" style="background:${tag(c.tag).bg};color:${tag(c.tag).color}">${tag(c.tag).label}</span>
+            <div class="card-title">${c.title}</div>
+            <div class="card-footer">
+              <div class="card-meta">
+                <div class="priority-dot" style="background:${PRIORITY[c.priority].color}" title="${PRIORITY[c.priority].label} priority"></div>
+                <span class="card-due"><i class="ti ti-calendar" style="font-size:10px"></i>${c.due}</span>
+                ${c.comments.length?`<span class="card-comments"><i class="ti ti-message" style="font-size:10px"></i>${c.comments.length}</span>`:""}
+              </div>
+              <div class="card-avatars">${c.assignees.slice(0,3).map(a=>`<div class="avatar" style="background:${COLORS[a]||"#888"};width:22px;height:22px;font-size:9px">${a}</div>`).join("")}</div>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+      <div class="drop-zone" data-col="${col.id}"></div>
+      ${addingIn===col.id?`
+        <div class="add-form">
+          <input id="new-card-input" placeholder="Card title…"/>
+          <div class="add-form-btns">
+            <button class="btn-confirm" id="btn-save">Add card</button>
+            <button class="btn-cancel-form" id="btn-cancel">Cancel</button>
+          </div>
+        </div>
+      `:""}
+    `;
+    board.appendChild(el);
+  });
+  bindEvents();
+}
+
+function bindEvents(){
+  document.querySelectorAll(".col-add-btn").forEach(b=>b.addEventListener("click",e=>{
+    addingIn=e.currentTarget.dataset.col;render();
+    setTimeout(()=>{const i=document.getElementById("new-card-input");if(i)i.focus();},30);
+  }));
+  const save=document.getElementById("btn-save");
+  if(save) save.addEventListener("click",()=>{
+    const i=document.getElementById("new-card-input");
+    const v=i?i.value.trim():"";
+    if(!v) return;
+    const col=columns.find(c=>c.id===addingIn);
+    if(col) col.cards.push({id:nextId++,title:v,tag:"dev",due:"TBD",assignees:["VS"],priority:"medium",comments:[]});
+    addingIn=null;render();toast("Card added");
+  });
+  const cancel=document.getElementById("btn-cancel");
+  if(cancel) cancel.addEventListener("click",()=>{addingIn=null;render();});
+
+  document.querySelectorAll(".card").forEach(card=>{
+    card.addEventListener("click",()=>openCard(parseInt(card.dataset.id)));
+    card.addEventListener("dragstart",()=>{dragCard=parseInt(card.dataset.id);dragFrom=card.dataset.col;card.classList.add("dragging");});
+    card.addEventListener("dragend",()=>{document.querySelectorAll(".card").forEach(c=>c.classList.remove("dragging"));document.querySelectorAll(".drop-zone").forEach(z=>z.classList.remove("active"));});
+  });
+  document.querySelectorAll(".drop-zone").forEach(z=>{
+    z.addEventListener("dragover",e=>{e.preventDefault();z.classList.add("active");});
+    z.addEventListener("dragleave",()=>z.classList.remove("active"));
+    z.addEventListener("drop",e=>{
+      e.preventDefault();z.classList.remove("active");
+      const to=z.dataset.col;
+      if(!dragCard||to===dragFrom) return;
+      const fromCol=columns.find(c=>c.id===dragFrom);
+      const toCol=columns.find(c=>c.id===to);
+      const idx=fromCol.cards.findIndex(c=>c.id===dragCard);
+      if(idx>-1){const[m]=fromCol.cards.splice(idx,1);toCol.cards.push(m);render();toast(`Moved to "${toCol.title}"`);}
+    });
+  });
+  document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",e=>{
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    e.currentTarget.classList.add("active");
+  }));
+  document.getElementById("btn-invite").addEventListener("click",()=>toast("Invite link copied!"));
+}
+
+function openCard(id){
+  let card=null,colName="";
+  columns.forEach(col=>{const c=col.cards.find(x=>x.id===id);if(c){card=c;colName=col.title;}});
+  if(!card) return;
+  const t=tag(card.tag);
+  const root=document.getElementById("modal-root");
+  root.innerHTML=`
+    <div class="modal-overlay" id="overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title">${card.title}</div>
+          <button class="modal-close" id="close-modal"><i class="ti ti-x"></i></button>
+        </div>
+        <div class="modal-badges" style="margin-bottom:16px">
+          <span class="badge" style="background:${t.bg};color:${t.color}">${t.label}</span>
+          <span class="badge" style="background:#f4f5f7;color:#374151">${colName}</span>
+          <span class="badge" style="background:#f4f5f7;color:${PRIORITY[card.priority].color}">● ${PRIORITY[card.priority].label} priority</span>
+        </div>
+        <div class="modal-section">
+          <div class="modal-label">Due date</div>
+          <div style="font-size:13px;color:#374151;display:flex;align-items:center;gap:6px"><i class="ti ti-calendar"></i>${card.due}</div>
+        </div>
+        <div class="modal-section">
+          <div class="modal-label">Assignees</div>
+          <div class="assignees-row">${card.assignees.map(a=>`<div class="assignee-chip"><div class="avatar" style="background:${COLORS[a]||"#888"};width:22px;height:22px;font-size:9px">${a}</div>${a}</div>`).join("")}</div>
+        </div>
+        <div class="modal-section">
+          <div class="modal-label">Comments (${card.comments.length})</div>
+          <div class="comments-list" id="comments-list">
+            ${card.comments.length?card.comments.map(c=>`
+              <div class="comment-item">
+                <div class="avatar" style="background:${COLORS[c.author]||"#888"};width:28px;height:28px;font-size:10px;flex-shrink:0">${c.author}</div>
+                <div class="comment-body">
+                  <div class="comment-author">${c.author}</div>
+                  <div class="comment-text">${c.text}</div>
+                  <div class="comment-time">${c.time}</div>
+                </div>
+              </div>
+            `).join(""):`<div class="no-comments">No comments yet. Be the first!</div>`}
+          </div>
+          <div class="comment-input-row">
+            <div class="avatar" style="background:#534AB7;width:28px;height:28px;font-size:10px;flex-shrink:0">VS</div>
+            <input id="comment-input" placeholder="Write a comment…"/>
+            <button class="btn-send" id="btn-send">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById("close-modal").addEventListener("click",()=>root.innerHTML="");
+  document.getElementById("overlay").addEventListener("click",e=>{if(e.target===e.currentTarget)root.innerHTML="";});
+  const sendComment=()=>{
+    const inp=document.getElementById("comment-input");
+    const v=inp.value.trim();if(!v) return;
+    card.comments.push({author:"VS",text:v,time:"just now"});
+    inp.value="";
+    document.getElementById("comments-list").innerHTML=card.comments.map(c=>`
+      <div class="comment-item">
+        <div class="avatar" style="background:${COLORS[c.author]||"#888"};width:28px;height:28px;font-size:10px;flex-shrink:0">${c.author}</div>
+        <div class="comment-body">
+          <div class="comment-author">${c.author}</div>
+          <div class="comment-text">${c.text}</div>
+          <div class="comment-time">${c.time}</div>
+        </div>
+      </div>
+    `).join("");
+    toast("Comment added");
+  };
+  document.getElementById("btn-send").addEventListener("click",sendComment);
+  document.getElementById("comment-input").addEventListener("keydown",e=>{if(e.key==="Enter")sendComment();});
+}
+
+function toast(msg){
+  const el=document.createElement("div");
+  el.className="toast";
+  el.innerHTML=`<i class="ti ti-check" style="color:#4ade80"></i>${msg}`;
+  document.getElementById("toast-root").appendChild(el);
+  setTimeout(()=>el.remove(),2500);
+}
+
+render();
+</script>
+</body>
+</html>
