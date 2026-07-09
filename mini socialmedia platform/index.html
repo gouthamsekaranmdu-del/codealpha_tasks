@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ConnectHub — Social Media Platform</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;min-height:100vh}
+.navbar{background:#fff;border-bottom:1px solid #e2e4e9;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.nav-logo{font-size:20px;font-weight:700;color:#1877f2;display:flex;align-items:center;gap:8px}
+.nav-logo i{font-size:24px}
+.nav-search{display:flex;align-items:center;gap:8px;background:#f0f2f5;border-radius:20px;padding:6px 14px;width:240px}
+.nav-search input{border:none;background:transparent;outline:none;font-size:14px;color:#1c1e21;width:100%}
+.nav-search input::placeholder{color:#8a8d91}
+.nav-icons{display:flex;align-items:center;gap:4px}
+.nav-icon-btn{width:40px;height:40px;border-radius:50%;background:#e4e6eb;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#1c1e21;font-size:18px;position:relative;transition:background 0.15s}
+.nav-icon-btn:hover{background:#d8dadf}
+.nav-badge{position:absolute;top:2px;right:2px;background:#e41e3f;color:#fff;font-size:10px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center}
+.nav-avatar{width:40px;height:40px;border-radius:50%;background:#1877f2;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;cursor:pointer;border:2px solid transparent;transition:border-color 0.15s}
+.nav-avatar:hover{border-color:#1877f2}
+.layout{display:flex;max-width:1100px;margin:0 auto;padding:16px;gap:16px}
+.sidebar-left{width:280px;flex-shrink:0;position:sticky;top:72px;height:fit-content}
+.sidebar-right{width:280px;flex-shrink:0;position:sticky;top:72px;height:fit-content}
+.feed{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
+.profile-card{background:#fff;border-radius:12px;border:1px solid #e2e4e9;overflow:hidden;margin-bottom:12px}
+.profile-cover{height:80px;background:linear-gradient(135deg,#1877f2,#42a5f5)}
+.profile-info{padding:0 16px 16px;margin-top:-28px}
+.profile-avatar{width:56px;height:56px;border-radius:50%;background:#1877f2;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;border:3px solid #fff;margin-bottom:8px}
+.profile-name{font-size:15px;font-weight:600;color:#1c1e21}
+.profile-bio{font-size:13px;color:#65676b;margin-top:2px}
+.profile-stats{display:flex;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid #e2e4e9}
+.stat{text-align:center;flex:1}
+.stat-num{font-size:16px;font-weight:700;color:#1c1e21}
+.stat-label{font-size:12px;color:#65676b}
+.sidebar-section{background:#fff;border-radius:12px;border:1px solid #e2e4e9;padding:16px;margin-bottom:12px}
+.sidebar-title{font-size:15px;font-weight:600;color:#1c1e21;margin-bottom:12px}
+.friend-item{display:flex;align-items:center;gap:10px;padding:6px 0;cursor:pointer;border-radius:8px}
+.friend-item:hover .friend-name{color:#1877f2}
+.friend-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;flex-shrink:0;position:relative}
+.online-dot{position:absolute;bottom:0;right:0;width:10px;height:10px;background:#31a24c;border-radius:50%;border:2px solid #fff}
+.friend-name{font-size:14px;color:#1c1e21;font-weight:500}
+.friend-mutual{font-size:12px;color:#65676b}
+.btn-follow{font-size:13px;padding:5px 14px;border-radius:8px;border:none;background:#e7f3ff;color:#1877f2;cursor:pointer;font-weight:600;margin-left:auto;transition:background 0.15s}
+.btn-follow:hover{background:#cce4ff}
+.btn-follow.following{background:#e4e6eb;color:#1c1e21}
+.create-post{background:#fff;border-radius:12px;border:1px solid #e2e4e9;padding:12px 16px}
+.create-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.create-input{flex:1;background:#f0f2f5;border-radius:20px;border:none;padding:10px 16px;font-size:15px;color:#1c1e21;cursor:pointer;text-align:left;outline:none}
+.create-input::placeholder{color:#65676b}
+.create-divider{height:1px;background:#e2e4e9;margin:0 -16px 10px}
+.create-actions{display:flex;gap:4px}
+.create-action-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;border-radius:8px;border:none;background:transparent;cursor:pointer;font-size:14px;font-weight:600;color:#65676b;transition:background 0.15s}
+.create-action-btn:hover{background:#f0f2f5}
+.post-card{background:#fff;border-radius:12px;border:1px solid #e2e4e9;overflow:hidden}
+.post-header{display:flex;align-items:flex-start;justify-content:space-between;padding:14px 16px 10px}
+.post-user{display:flex;align-items:center;gap:10px}
+.post-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#fff;flex-shrink:0}
+.post-username{font-size:15px;font-weight:600;color:#1c1e21}
+.post-time{font-size:13px;color:#65676b;display:flex;align-items:center;gap:4px}
+.post-more{background:none;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#65676b;font-size:20px;transition:background 0.15s}
+.post-more:hover{background:#f0f2f5}
+.post-content{padding:0 16px 12px;font-size:15px;color:#1c1e21;line-height:1.5}
+.post-image{width:100%;max-height:360px;object-fit:cover;background:#f0f2f5;display:flex;align-items:center;justify-content:center;color:#8a8d91;font-size:14px}
+.post-image-placeholder{width:100%;height:240px;background:linear-gradient(135deg,#667eea22,#764ba222);display:flex;align-items:center;justify-content:center;color:#8a8d91;font-size:13px;gap:8px}
+.post-stats{padding:8px 16px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #e2e4e9;border-bottom:1px solid #e2e4e9}
+.post-stat-left{display:flex;align-items:center;gap:4px;font-size:14px;color:#65676b}
+.like-count{display:flex;align-items:center;gap:4px;cursor:pointer}
+.like-count:hover{text-decoration:underline}
+.post-actions{display:flex;padding:4px 8px}
+.post-action{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;border-radius:8px;border:none;background:transparent;cursor:pointer;font-size:14px;font-weight:600;color:#65676b;transition:all 0.15s}
+.post-action:hover{background:#f0f2f5}
+.post-action.liked{color:#1877f2}
+.post-action.liked i{color:#1877f2}
+.comments-section{padding:8px 16px 12px;border-top:1px solid #e2e4e9;display:none}
+.comments-section.open{display:block}
+.comment-item{display:flex;gap:8px;margin-bottom:8px}
+.comment-bubble{background:#f0f2f5;border-radius:16px;padding:8px 12px;flex:1}
+.comment-author{font-size:13px;font-weight:600;color:#1c1e21}
+.comment-text{font-size:14px;color:#1c1e21;margin-top:1px}
+.comment-actions{display:flex;gap:12px;margin-top:4px;padding-left:4px}
+.comment-action{font-size:12px;color:#65676b;cursor:pointer;font-weight:600}
+.comment-action:hover{text-decoration:underline}
+.comment-input-row{display:flex;gap:8px;align-items:center;margin-top:8px}
+.comment-input{flex:1;background:#f0f2f5;border-radius:20px;border:none;padding:8px 14px;font-size:14px;color:#1c1e21;outline:none}
+.comment-input::placeholder{color:#8a8d91}
+.comment-send-btn{width:34px;height:34px;border-radius:50%;background:#1877f2;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;transition:background 0.15s;flex-shrink:0}
+.comment-send-btn:hover{background:#166fe5}
+.trending-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f0f2f5;cursor:pointer}
+.trending-item:last-child{border-bottom:none}
+.trending-tag{font-size:14px;font-weight:600;color:#1877f2}
+.trending-count{font-size:12px;color:#65676b}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1c1e21;color:#fff;border-radius:10px;padding:10px 18px;font-size:14px;display:flex;align-items:center;gap:8px;z-index:100;animation:fadeUp 0.2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:50}
+.modal{background:#fff;border-radius:12px;width:400px;max-height:80vh;overflow-y:auto}
+.modal-header{padding:14px 16px;border-bottom:1px solid #e2e4e9;display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:18px;font-weight:700;color:#1c1e21}
+.modal-close{width:36px;height:36px;border-radius:50%;background:#e4e6eb;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:#1c1e21}
+.modal-close:hover{background:#d8dadf}
+.modal-body{padding:16px}
+.post-textarea{width:100%;border:none;outline:none;font-size:16px;color:#1c1e21;resize:none;min-height:100px;font-family:inherit;line-height:1.5}
+.post-textarea::placeholder{color:#8a8d91}
+.modal-footer{padding:12px 16px;border-top:1px solid #e2e4e9;display:flex;justify-content:flex-end}
+.btn-post{font-size:15px;padding:8px 20px;border-radius:8px;border:none;background:#1877f2;color:#fff;cursor:pointer;font-weight:600;transition:background 0.15s}
+.btn-post:hover{background:#166fe5}
+.btn-post:disabled{background:#8ab4f8;cursor:not-allowed}
+@media(max-width:900px){.sidebar-left,.sidebar-right{display:none}}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-logo"><i class="ti ti-brand-hipchat" aria-hidden="true"></i> ConnectHub</div>
+  <div class="nav-search"><i class="ti ti-search" aria-hidden="true" style="color:#8a8d91;font-size:16px"></i><input placeholder="Search ConnectHub"/></div>
+  <div class="nav-icons">
+    <button class="nav-icon-btn" title="Notifications" onclick="showToast('No new notifications')"><i class="ti ti-bell" aria-hidden="true"></i><span class="nav-badge">3</span></button>
+    <button class="nav-icon-btn" title="Messages" onclick="showToast('No new messages')"><i class="ti ti-message" aria-hidden="true"></i><span class="nav-badge">2</span></button>
+    <div class="nav-avatar" title="Your profile">VS</div>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar-left">
+    <div class="profile-card">
+      <div class="profile-cover"></div>
+      <div class="profile-info">
+        <div class="profile-avatar">VS</div>
+        <div class="profile-name">Vigneshvar S</div>
+        <div class="profile-bio">Data Science Intern @CodeAlpha</div>
+        <div class="profile-stats">
+          <div class="stat"><div class="stat-num" id="post-count">4</div><div class="stat-label">Posts</div></div>
+          <div class="stat"><div class="stat-num" id="follower-count">128</div><div class="stat-label">Followers</div></div>
+          <div class="stat"><div class="stat-num">64</div><div class="stat-label">Following</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">People you may know</div>
+      <div id="suggestions-list"></div>
+    </div>
+  </aside>
+
+  <main class="feed">
+    <div class="create-post">
+      <div class="create-top">
+        <div class="nav-avatar">VS</div>
+        <input class="create-input" placeholder="What's on your mind, Vignesh?" readonly onclick="openPostModal()"/>
+      </div>
+      <div class="create-divider"></div>
+      <div class="create-actions">
+        <button class="create-action-btn" onclick="openPostModal()"><i class="ti ti-photo" aria-hidden="true" style="color:#f3425f"></i> Photo</button>
+        <button class="create-action-btn" onclick="openPostModal()"><i class="ti ti-video" aria-hidden="true" style="color:#f7b928"></i> Video</button>
+        <button class="create-action-btn" onclick="openPostModal()"><i class="ti ti-mood-smile" aria-hidden="true" style="color:#45bd62"></i> Feeling</button>
+      </div>
+    </div>
+    <div id="feed-list"></div>
+  </main>
+
+  <aside class="sidebar-right">
+    <div class="sidebar-section">
+      <div class="sidebar-title">Trending topics</div>
+      <div id="trending-list"></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Online friends</div>
+      <div id="online-list"></div>
+    </div>
+  </aside>
+</div>
+
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+
+<script>
+const COLORS=["#1877f2","#e41e3f","#31a24c","#f7b928","#7c3aed","#0284c7","#dc2626","#059669"];
+const USERS=[
+  {id:1,name:"Vigneshvar S",initials:"VS",color:"#1877f2",bio:"Data Science Intern @CodeAlpha"},
+  {id:2,name:"Arjun Raj",initials:"AR",color:"#e41e3f",bio:"Full Stack Developer"},
+  {id:3,name:"Priya Kumar",initials:"PK",color:"#31a24c",bio:"UI/UX Designer"},
+  {id:4,name:"Meera Nair",initials:"MN",color:"#7c3aed",bio:"ML Engineer @Google"},
+  {id:5,name:"Siva Nathan",initials:"SN",color:"#f7b928",bio:"DevOps Engineer"},
+];
+
+let posts=[
+  {id:1,userId:4,content:"Just deployed my first machine learning model to production! 🎉 Took 3 months but totally worth it. The model predicts churn with 89% accuracy.",time:"2h",likes:24,liked:false,comments:[{userId:2,text:"Congrats Meera! That accuracy is impressive 🔥"},{userId:3,text:"Amazing work! Which algorithm did you use?"}],showComments:false},
+  {id:2,userId:3,content:"Redesigned our app's onboarding flow and reduced drop-off by 40%! Sometimes small UX changes make a huge difference. Here's a sneak peek of the new design 👇",time:"4h",likes:47,liked:false,hasImage:true,imageText:"Onboarding flow mockup",comments:[{userId:1,text:"This looks so clean! Great work Priya."},{userId:5,text:"40% improvement is massive 🙌"}],showComments:false},
+  {id:3,userId:2,content:"Hot take: Clean code matters more than clever code. I'd rather read straightforward code that works than a 'brilliant' one-liner that nobody understands 6 months later.",time:"6h",likes:89,liked:false,comments:[{userId:4,text:"100% agree. Readability > cleverness always."},{userId:1,text:"This should be pinned in every dev team's Slack 😂"}],showComments:false},
+  {id:4,userId:5,content:"Finally set up my homelab server this weekend! Running Kubernetes, Prometheus, and Grafana. Monitoring dashboards look so satisfying 📊",time:"1d",likes:31,liked:false,hasImage:true,imageText:"Server dashboard screenshot",comments:[],showComments:false},
+];
+
+let suggestions=[
+  {id:2,name:"Arjun Raj",initials:"AR",color:"#e41e3f",mutual:12,following:false},
+  {id:3,name:"Priya Kumar",initials:"PK",color:"#31a24c",mutual:8,following:false},
+  {id:4,name:"Meera Nair",initials:"MN",color:"#7c3aed",mutual:5,following:false},
+];
+
+const trending=[
+  {tag:"#MachineLearning",count:"24.5K posts"},
+  {tag:"#WebDev",count:"18.2K posts"},
+  {tag:"#Python",count:"15.8K posts"},
+  {tag:"#OpenSource",count:"12.1K posts"},
+  {tag:"#TechCareers",count:"9.4K posts"},
+];
+
+const onlineFriends=[
+  {name:"Arjun Raj",initials:"AR",color:"#e41e3f"},
+  {name:"Meera Nair",initials:"MN",color:"#7c3aed"},
+  {name:"Siva Nathan",initials:"SN",color:"#f7b928"},
+];
+
+let nextPostId=5;
+
+function getUser(id){return USERS.find(u=>u.id===id)||USERS[0];}
+
+function renderFeed(){
+  const list=document.getElementById("feed-list");
+  list.innerHTML=posts.map(post=>{
+    const user=getUser(post.userId);
+    return`
+    <div class="post-card" id="post-${post.id}">
+      <div class="post-header">
+        <div class="post-user">
+          <div class="post-avatar" style="background:${user.color}">${user.initials}</div>
+          <div>
+            <div class="post-username">${user.name}</div>
+            <div class="post-time"><i class="ti ti-clock" aria-hidden="true" style="font-size:12px"></i>${post.time} ago <i class="ti ti-world" aria-hidden="true" style="font-size:12px"></i></div>
+          </div>
+        </div>
+        <button class="post-more"><i class="ti ti-dots" aria-hidden="true"></i></button>
+      </div>
+      <div class="post-content">${post.content}</div>
+      ${post.hasImage?`<div class="post-image-placeholder"><i class="ti ti-photo" aria-hidden="true" style="font-size:32px;opacity:0.4"></i><span>${post.imageText||"Image"}</span></div>`:""}
+      <div class="post-stats">
+        <div class="like-count" onclick="toggleLike(${post.id})">
+          <span style="width:20px;height:20px;border-radius:50%;background:#1877f2;display:inline-flex;align-items:center;justify-content:center"><i class="ti ti-thumb-up" aria-hidden="true" style="font-size:11px;color:#fff"></i></span>
+          <span style="font-size:14px;color:#65676b">${post.likes}</span>
+        </div>
+        <span style="font-size:14px;color:#65676b;cursor:pointer" onclick="toggleComments(${post.id})">${post.comments.length} comment${post.comments.length!==1?"s":""}</span>
+      </div>
+      <div class="post-actions">
+        <button class="post-action ${post.liked?"liked":""}" onclick="toggleLike(${post.id})">
+          <i class="ti ti-thumb-up" aria-hidden="true"></i> Like
+        </button>
+        <button class="post-action" onclick="toggleComments(${post.id})">
+          <i class="ti ti-message" aria-hidden="true"></i> Comment
+        </button>
+        <button class="post-action" onclick="showToast('Link copied to clipboard!')">
+          <i class="ti ti-share" aria-hidden="true"></i> Share
+        </button>
+      </div>
+      <div class="comments-section ${post.showComments?"open":""}" id="comments-${post.id}">
+        ${post.comments.map(c=>{const cu=getUser(c.userId);return`
+          <div class="comment-item">
+            <div class="post-avatar" style="background:${cu.color};width:32px;height:32px;font-size:11px;flex-shrink:0">${cu.initials}</div>
+            <div>
+              <div class="comment-bubble">
+                <div class="comment-author">${cu.name}</div>
+                <div class="comment-text">${c.text}</div>
+              </div>
+              <div class="comment-actions">
+                <span class="comment-action">Like</span>
+                <span class="comment-action">Reply</span>
+                <span style="font-size:12px;color:#8a8d91">just now</span>
+              </div>
+            </div>
+          </div>
+        `;}).join("")}
+        <div class="comment-input-row">
+          <div class="nav-avatar" style="width:32px;height:32px;font-size:11px;flex-shrink:0">VS</div>
+          <input class="comment-input" placeholder="Write a comment…" id="comment-input-${post.id}" onkeydown="if(event.key==='Enter')addComment(${post.id})"/>
+          <button class="comment-send-btn" onclick="addComment(${post.id})"><i class="ti ti-send" aria-hidden="true" style="font-size:14px"></i></button>
+        </div>
+      </div>
+    </div>
+    `;
+  }).join("");
+}
+
+function renderSuggestions(){
+  document.getElementById("suggestions-list").innerHTML=suggestions.map(s=>`
+    <div class="friend-item">
+      <div class="friend-avatar" style="background:${s.color}">${s.initials}</div>
+      <div>
+        <div class="friend-name">${s.name}</div>
+        <div class="friend-mutual">${s.mutual} mutual friends</div>
+      </div>
+      <button class="btn-follow ${s.following?"following":""}" onclick="toggleFollow('${s.id}')">${s.following?"Following":"Follow"}</button>
+    </div>
+  `).join("");
+}
+
+function renderTrending(){
+  document.getElementById("trending-list").innerHTML=trending.map(t=>`
+    <div class="trending-item">
+      <div class="trending-tag">${t.tag}</div>
+      <div class="trending-count">${t.count}</div>
+    </div>
+  `).join("");
+}
+
+function renderOnline(){
+  document.getElementById("online-list").innerHTML=onlineFriends.map(f=>`
+    <div class="friend-item">
+      <div class="friend-avatar" style="background:${f.color}">${f.initials}<div class="online-dot"></div></div>
+      <div class="friend-name">${f.name}</div>
+    </div>
+  `).join("");
+}
+
+function toggleLike(postId){
+  const post=posts.find(p=>p.id===postId);
+  if(!post) return;
+  post.liked=!post.liked;
+  post.likes+=post.liked?1:-1;
+  renderFeed();
+}
+
+function toggleComments(postId){
+  const post=posts.find(p=>p.id===postId);
+  if(!post) return;
+  post.showComments=!post.showComments;
+  renderFeed();
+  if(post.showComments) setTimeout(()=>{const inp=document.getElementById(`comment-input-${postId}`);if(inp)inp.focus();},50);
+}
+
+function addComment(postId){
+  const inp=document.getElementById(`comment-input-${postId}`);
+  const text=inp?inp.value.trim():"";
+  if(!text) return;
+  const post=posts.find(p=>p.id===postId);
+  if(post){post.comments.push({userId:1,text});post.showComments=true;}
+  renderFeed();
+  showToast("Comment posted!");
+}
+
+function toggleFollow(userId){
+  const s=suggestions.find(x=>x.id==userId);
+  if(!s) return;
+  s.following=!s.following;
+  const fc=document.getElementById("follower-count");
+  if(fc) fc.textContent=parseInt(fc.textContent)+(s.following?1:-1);
+  renderSuggestions();
+  showToast(s.following?`You are now following ${s.name}`:`Unfollowed ${s.name}`);
+}
+
+function openPostModal(){
+  const root=document.getElementById("modal-root");
+  root.innerHTML=`
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title">Create post</div>
+          <button class="modal-close" onclick="closeModal()"><i class="ti ti-x" aria-hidden="true"></i></button>
+        </div>
+        <div class="modal-body">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <div class="nav-avatar">VS</div>
+            <div>
+              <div style="font-size:15px;font-weight:600;color:#1c1e21">Vigneshvar S</div>
+              <div style="font-size:13px;color:#65676b;display:flex;align-items:center;gap:4px"><i class="ti ti-world" aria-hidden="true"></i> Public</div>
+            </div>
+          </div>
+          <textarea class="post-textarea" id="post-textarea" placeholder="What's on your mind, Vignesh?" autofocus oninput="document.getElementById('btn-submit-post').disabled=!this.value.trim()"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-post" id="btn-submit-post" disabled onclick="submitPost()">Post</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById("modal-overlay").addEventListener("click",e=>{if(e.target===e.currentTarget)closeModal();});
+  setTimeout(()=>{const t=document.getElementById("post-textarea");if(t)t.focus();},50);
+}
+
+function submitPost(){
+  const ta=document.getElementById("post-textarea");
+  const text=ta?ta.value.trim():"";
+  if(!text) return;
+  posts.unshift({id:nextPostId++,userId:1,content:text,time:"just now",likes:0,liked:false,comments:[],showComments:false});
+  const pc=document.getElementById("post-count");
+  if(pc) pc.textContent=parseInt(pc.textContent)+1;
+  closeModal();
+  renderFeed();
+  showToast("Post shared successfully!");
+}
+
+function closeModal(){document.getElementById("modal-root").innerHTML="";}
+
+function showToast(msg){
+  const el=document.createElement("div");
+  el.className="toast";
+  el.innerHTML=`<i class="ti ti-check" aria-hidden="true" style="color:#45bd62"></i>${msg}`;
+  document.getElementById("toast-root").appendChild(el);
+  setTimeout(()=>el.remove(),2500);
+}
+
+renderFeed();
+renderSuggestions();
+renderTrending();
+renderOnline();
+</script>
+</body>
+</html>
